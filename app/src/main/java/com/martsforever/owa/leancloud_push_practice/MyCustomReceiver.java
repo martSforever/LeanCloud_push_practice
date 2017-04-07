@@ -26,7 +26,6 @@ public class MyCustomReceiver extends BroadcastReceiver {
             //获取消息内容
             JSONObject jsonObject = JSON.parseObject(intent.getExtras().getString("com.avos.avoscloud.Data"));
             if (jsonObject != null) {
-
                 Log.d(TAG, "got action " + action + " on channel " + channel + " with:");
                 Set<String> itr = jsonObject.keySet();
                 for (String key : itr) {
