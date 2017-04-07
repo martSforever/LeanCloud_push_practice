@@ -13,16 +13,22 @@
         android:text="Hello World!" />
     <Button
         android:id="@+id/btn"
-        android:text="clck"
+        android:text="推送给所有的Android用户"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <EditText
         android:id="@+id/edit"
+        android:hint="设备id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/edit2"
+        android:hint="推送的消息"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
         android:id="@+id/btn2"
-        android:text="clck2"
+        android:text="推送给特定用户"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>

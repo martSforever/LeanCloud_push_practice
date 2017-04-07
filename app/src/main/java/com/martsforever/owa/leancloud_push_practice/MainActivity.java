@@ -31,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
         LogUtil.log.d(TAG, "Get Broadcat");
         System.out.println("init");
         testPushService();
+        registerReceiver();
         final EditText edit = (EditText) findViewById(R.id.edit);
+        final EditText edit2 = (EditText) findViewById(R.id.edit2);
 
         Button button1 = (Button) findViewById(R.id.btn);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -64,12 +66,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String installationId = edit.getText().toString();
                 /*push to specific android device|*/
-
                 AVQuery pushQuery = AVInstallation.getQuery();
                 // 假设 THE_INSTALLATION_ID 是保存在用户表里的 installationId，
                 // 可以在应用启动的时候获取并保存到用户表
-                pushQuery.whereEqualTo("installationId", installationId);
-                AVPush.sendMessageInBackground("hello:=========="+installationId,  pushQuery, new SendCallback() {
+                AVPush push = new AVPush();
+                String action = "com.avos.UPDATE_STATUS";
+                String name = "weishengjian";
+                String tag = "test leancloud push";
+                JSONObject data;
+                data = new JSONObject();
+                data.put("action", action);
+                data.put("name", name);
+                data.put("tag", tag);
+                data.put("message",edit2.getText().toString().trim());
+
+                push.setData(data);
+                push.setCloudQuery("select * from _Installation where installationId ='" + installationId + "'");
+                push.sendInBackground(new SendCallback() {
                     @Override
                     public void done(AVException e) {
                         if (e == null) {
@@ -81,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
             }
         });
     }
@@ -121,13 +133,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-/*
     private void registerReceiver() {
+        System.out.println("retgister receiver 1111111");
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.BOOT_COMPLETED");
         intentFilter.addAction("android.intent.action.USER_PRESENT");
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        intentFilter.addAction("com.martsforever.owa.timekeeper");
-        registerReceiver(new MyCustomReceiver(), intentFilter);
-    }*/
+        intentFilter.addAction("com.avos.UPDATE_STATUS");
+        MyCustomReceiver myCustomReceiver = new MyCustomReceiver();
+        myCustomReceiver.setHandleMessage(new MyCustomReceiver.HandleMessage() {
+            @Override
+            public void receiveMessage(JSONObject jsonObject) {
+                ShowMessageUtil.tosatFast(jsonObject.getString("message"),MainActivity.this);
+            }
+        });
+        registerReceiver(myCustomReceiver, intentFilter);
+    }
 }
